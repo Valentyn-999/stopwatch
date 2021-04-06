@@ -1,10 +1,16 @@
 import React, {FC, useState} from 'react';
 import {Display} from './components/Display';
 import {Buttons} from './components/Buttons';
+import style from './App.module.css';
 import './App.css';
 
+export enum Status {
+    Ready,
+    Go,
+    Stop
+}
+
 export type TimeType = {
-    ms: number,
     s: number,
     m: number,
     h: number
@@ -12,66 +18,56 @@ export type TimeType = {
 
 export const App: FC = () => {
 
-    const [time, setTime] = useState<TimeType>({ms: 0, s: 0, m: 0, h: 0})
+    const [time, setTime] = useState<TimeType>({s: 0, m: 0, h: 0})
     const [interv, setInterv] = useState<any>()
-    const [status, setStatus] = useState<number>(0)
+    const [status, setStatus] = useState<Status>(Status.Ready)
 
-
-    const start = () => {
-        run();
-        setStatus(1)
-        setInterv(setInterval(run, 10))
-    };
-
-    let updatedMs = time.ms,
-        updatedS = time.s,
+    let updatedS = time.s,
         updatedM = time.m,
         updatedH = time.h
 
-  const run = () => {
-    if (updatedM === 60) {
-      updatedH++
-      updatedM = 0
+    const start = () => {
+        getStarted()
+        setStatus(Status.Go)
+        setInterv(setInterval(getStarted, 1000))
     }
-    if (updatedS === 60) {
-      updatedM++
-      updatedS = 0
+
+    const getStarted = () => {
+        if (updatedM === 60) {
+            updatedH++
+            updatedM = 0
+        }
+        if (updatedS === 60) {
+            updatedM++
+            updatedS = 0
+        }
+        updatedS++
+        return setTime({s: updatedS, m: updatedM, h: updatedH})
     }
-    if (updatedMs === 100) {
-      updatedS++
-      updatedMs = 0
-    }
-    updatedMs++
-    return setTime({ms: updatedMs, s: updatedS, m: updatedM, h: updatedH})
-  }
 
     const stop = () => {
         clearInterval(interv)
-        setStatus(2)
+        setStatus(Status.Stop)
     }
 
     const reset = () => {
         clearInterval(interv)
-        setStatus(0)
-        setTime({ms: 0, s: 0, m: 0, h: 0})
+        setStatus(Status.Ready)
+        setTime({s: 0, m: 0, h: 0})
     }
-
 
     const resume = () => start()
 
-
     return (
         <React.Fragment>
-            <div className="main-section">
-                <div className="clock-holder">
-                    <div className="stopwatch">
+            <div className={style.mainContainer}>
+                <div className={style.clock}>
+                    <div className={style.display}>
                         <Display time={time}/>
-                        <Buttons status={status}
-                                 resume={resume}
-                                 reset={reset}
-                                 stop={stop}
-                                 start={start}
-                        />
+                    </div>
+                    <div className={style.buttons}>
+                        <Buttons status={status} resume={resume} reset={reset}
+                                 stop={stop} start={start}/>
                     </div>
                 </div>
             </div>

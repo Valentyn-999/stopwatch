@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
+import style from './Buttons.module.css'
+import {Status} from "../App";
 
 type PropsType = {
-    status: number
+    status: Status
     start: () => void
     stop: () => void
     reset: () => void
@@ -9,45 +11,39 @@ type PropsType = {
 }
 
 export const Buttons = (props: PropsType) => {
-    const [cc, setCc] = useState(0)
+    const [clickCount, setClickCount] = useState(0)
 
     const doubleClick = () => {
-        setCc(cc + 1)
+        setClickCount(clickCount + 1)
 
         setTimeout(() => {
-            setCc(0)
+            setClickCount(0)
         }, 300)
 
-        if (cc === 1) {
+        if (clickCount === 1) {
            props.stop()
         }
     }
 
     return (
-        <div>
-            {(props.status === 0)?
-                <button className="stopwatch-btn stopwatch-btn-gre"
-                        onClick={props.start}>Start</button> : ""
+        <React.Fragment>
+            {(props.status === Status.Ready) &&
+                <button className={style.button} onClick={props.start}>Start</button>
             }
 
-            {(props.status === 1)?
-                <div>
-                    <button className="stopwatch-btn stopwatch-btn-red"
-                            onClick={ doubleClick }>Wait</button>
-                    <button className="stopwatch-btn stopwatch-btn-yel"
-                            onClick={ () => props.reset() }>Reset</button>
-                </div> : ""
+            {(props.status === Status.Go) &&
+                <div className={style.group}>
+                    <button className={style.button} onClick={doubleClick}>Wait</button>
+                    <button className={style.button} onClick={props.reset}>Reset</button>
+                </div>
             }
 
-            {(props.status === 2)?
-                <div>
-                    <button className="stopwatch-btn stopwatch-btn-gre"
-                            onClick={props.resume}>Resume</button>
-                    <button className="stopwatch-btn stopwatch-btn-yel"
-                            onClick={ () => props.reset() }>Reset</button>
-                </div> : ""
+            {(props.status === Status.Stop) &&
+                <div className={style.group}>
+                    <button className={style.button} onClick={props.resume}>Resume</button>
+                    <button className={style.button} onClick={props.reset}>Reset</button>
+                </div>
             }
-
-        </div>
+        </React.Fragment>
     )
 }

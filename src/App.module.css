@@ -1,0 +1,24 @@
+.mainContainer {
+    margin: 100px;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    border: 2px solid black;
+    background-color: rgba(255,44,123,0.62);
+    /*background-color: rgb(221 14 116 0.62);*/
+}
+.clock {
+    margin: 20px;
+    max-width: 1400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+.display {
+    font-size: 28px;
+    color: yellow;
+}
+.buttons{
+
+}
